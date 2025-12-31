@@ -16,7 +16,6 @@
             transition: background 2s ease;
         }
 
-        /* Pure White Light Glow Effect */
         .door-container::before {
             content: '';
             position: absolute;
@@ -30,7 +29,6 @@
             filter: blur(40px);
         }
 
-        /* Jab darwaza khulega tab White Light phail jayegi */
         .open.door-container::before {
             width: 900px;
             height: 900px;
@@ -127,7 +125,11 @@
         function prepareDoor() {
             const nameInput = document.getElementById('userName').value.trim();
             if(!nameInput) return alert("Please enter name!");
-            music.play().catch(e => console.log("Music click required"));
+            
+            // Chrome Force Play Fix
+            music.load();
+            music.play().catch(e => console.log("Interaction required"));
+            
             setLogic(nameInput);
             document.getElementById('input-section').style.display = 'none';
             document.getElementById('main-door').style.display = 'block';
@@ -141,11 +143,24 @@
             music.play();
             door.classList.add('open');
 
-            // Seedha project folder se photo load hogi
-            const photoName = userData.name.toLowerCase() + '.jpg';
-            userImg.src = photoName; 
+            // --- PHOTO NAME FIX LOGIC ---
+            let rawName = userData.name.trim();
+            // Pehla letter Capital, baaki small (Jaise: Kavya)
+            let formattedName = rawName.charAt(0).toUpperCase() + rawName.slice(1).toLowerCase();
+            
+            // Try 1: Pehla Capital (Kavya.jpg)
+            userImg.src = formattedName + ".jpg";
+
             userImg.onload = () => { userImg.style.display = 'block'; };
-            userImg.onerror = () => { userImg.style.display = 'none'; };
+            
+            userImg.onerror = () => {
+                // Try 2: Agar nahi mili toh check karein sab Small (kavya.jpg)
+                if(!userImg.src.includes(rawName.toLowerCase())){
+                    userImg.src = rawName.toLowerCase() + ".jpg";
+                } else {
+                    userImg.style.display = 'none';
+                }
+            };
 
             setTimeout(() => {
                 door.classList.add('fade-out');
@@ -153,7 +168,7 @@
                 document.body.style.background = userData.bg;
                 confetti({ 
                     particleCount: 150, spread: 70, origin: { y: 0.6 },
-                    colors: ['#ffffff', '#f1c40f', '#e67e22']
+                    colors: ['#ffffff', '#f1c40f', '#000000']
                 });
             }, 1200);
 
@@ -167,8 +182,8 @@
             
             const oldTeachers = ["bhavisha", "nikita", "shivani", "aakash"];
             const newTeachers = ["dhara", "dhara modi", "shefali"];
-            const oldFriends = ["Kavya", "Ahmad", "Henil", "shiv", "Dharmik", "vinit", "tej", "dhaval", "khushi"];
-            const newFriends = ["Kirtan", "mihir", "Krushna", "Trusha", "shreya", "Jayesh", "pinank", "disha"];
+            const oldFriends = ["kavya", "ahmad", "henil", "shiv", "dharmik", "vinit", "tej", "dhaval", "khushi"];
+            const newFriends = ["kirtan", "mihir", "krishn", "krushna", "trusha", "shreya", "jayesh", "pinank", "disha"];
 
             if(oldTeachers.some(n => lower.includes(n))) {
                 bg = "#0a192f";
@@ -195,4 +210,5 @@
         }
     </script>
 </body>
-</html>
+    </html>
+        
