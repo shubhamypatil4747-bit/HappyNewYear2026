@@ -16,6 +16,7 @@
             transition: background 2s ease;
         }
 
+        /* Pure White Light Glow Effect */
         .door-container::before {
             content: '';
             position: absolute;
@@ -126,10 +127,10 @@
             const nameInput = document.getElementById('userName').value.trim();
             if(!nameInput) return alert("Please enter name!");
             
-            // Chrome Force Play Fix
+            // Chrome Force Play
             music.load();
-            music.play().catch(e => console.log("Interaction required"));
-            
+            music.play().catch(e => console.log("User interaction needed for audio"));
+
             setLogic(nameInput);
             document.getElementById('input-section').style.display = 'none';
             document.getElementById('main-door').style.display = 'block';
@@ -143,24 +144,27 @@
             music.play();
             door.classList.add('open');
 
-            // --- PHOTO NAME FIX LOGIC ---
+            // --- ULTIMATE PHOTO FIXER LOGIC ---
             let rawName = userData.name.trim();
-            // Pehla letter Capital, baaki small (Jaise: Kavya)
-            let formattedName = rawName.charAt(0).toUpperCase() + rawName.slice(1).toLowerCase();
+            let nameSmall = rawName.toLowerCase();
+            let nameCapital = rawName.charAt(0).toUpperCase() + rawName.slice(1).toLowerCase();
             
-            // Try 1: Pehla Capital (Kavya.jpg)
-            userImg.src = formattedName + ".jpg";
+            // Pehle wahi try karo jo Test A mein chala (Kavya.jpg)
+            userImg.src = nameCapital + ".jpg";
 
-            userImg.onload = () => { userImg.style.display = 'block'; };
-            
-            userImg.onerror = () => {
-                // Try 2: Agar nahi mili toh check karein sab Small (kavya.jpg)
-                if(!userImg.src.includes(rawName.toLowerCase())){
-                    userImg.src = rawName.toLowerCase() + ".jpg";
+            userImg.onerror = function() {
+                if (userImg.src.includes(nameCapital + ".jpg")) {
+                    userImg.src = nameSmall + ".jpg"; // Option 2: kavya.jpg
+                } else if (userImg.src.includes(nameSmall + ".jpg")) {
+                    userImg.src = nameCapital + ".JPG"; // Option 3: Kavya.JPG
+                } else if (userImg.src.includes(nameCapital + ".JPG")) {
+                    userImg.src = nameSmall + ".JPG"; // Option 4: kavya.JPG
                 } else {
                     userImg.style.display = 'none';
                 }
             };
+
+            userImg.onload = () => { userImg.style.display = 'block'; };
 
             setTimeout(() => {
                 door.classList.add('fade-out');
@@ -210,5 +214,5 @@
         }
     </script>
 </body>
-    </html>
-        
+</html>
+
